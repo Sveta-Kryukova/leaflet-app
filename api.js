@@ -1,7 +1,7 @@
-const client = require('./placesdb.js');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const client = require('./placesdb.js');
 
 const app = express();
 const PORT = 3000;
@@ -30,16 +30,16 @@ app.get('/places', (req, res) => {
 });
 
 app.get('/places/:id', (req, res) => {
-  const placeId = req.params.id
+  const placeId = req.params.id;
   client.query('SELECT * FROM places WHERE id = $1', [placeId], (err, result) => {
     if (err) {
-      console.log(err)
-      res.status(500).send('Internal Server Error')
+      console.log(err);
+      res.status(500).send('Internal Server Error');
     } else {
-      res.send(result.rows)
+      res.send(result.rows);
     }
-  })
-})
+  });
+});
 
 app.post('/places', (req, res) => {
   const place = req.body;
@@ -56,7 +56,13 @@ app.post('/places', (req, res) => {
 
     const insertQuery = `INSERT INTO places (id, name, description, latitude, longitude)
   VALUES ($1, $2, $3, $4, $5) RETURNING *`;
-    const values = [newId, place.name, place.description, place.latitude, place.longitude];
+    const values = [
+      newId,
+      place.name,
+      place.description,
+      place.latitude,
+      place.longitude,
+    ];
 
     client.query(insertQuery, values, (err, result) => {
       if (err) {
@@ -70,32 +76,42 @@ app.post('/places', (req, res) => {
   });
 });
 
-app.put('/places/:id', (req, res)=> {
-  let place = req.body;
-  let updateQuery = `update places
-                     set name = '${place.name}',
-                     description = '${place.description}',
-                     latitude = '${place.latitude}',
-                     longitude = '${place.longitude}'
-                     where id = ${place.id}`
+app.put('/places/:id', (req, res) => {
+  const place = req.body;
+  const updateQuery = `UPDATE places
+                       SET name = $1,
+                       description = $2,
+                       latitude = $3,
+                       longitude = $4
+                       WHERE id = $5`;
+  const values = [
+    place.name,
+    place.description,
+    place.latitude,
+    place.longitude,
+    place.id,
+  ];
 
-  client.query(updateQuery, (err, result)=>{
-      if(!err){
-          res.send('Update was successful')
-      }
-      else{ console.log(err.message) }
-  })
-  client.end;
-})
+  client.query(updateQuery, values, (err, result) => {
+    if (err) {
+      console.log(err.message);
+      res.status(500).send('Internal Server Error');
+    } else {
+      res.send('Update was successful');
+    }
+  });
+});
 
-app.delete('/places/:id', (req, res)=> {
-  let insertQuery = `delete from places where id=${req.params.id}`
+app.delete('/places/:id', (req, res) => {
+  const deleteQuery = `DELETE FROM places WHERE id = $1`;
+  const placeId = req.params.id;
 
-  client.query(insertQuery, (err, result)=>{
-      if(!err){
-          res.send('Deletion was successful')
-      }
-      else{ console.log(err.message) }
-  })
-  client.end;
-})
+  client.query(deleteQuery, [placeId], (err, result) => {
+    if (err) {
+      console.log(err.message);
+      res.status(500).send('Internal Server Error');
+    } else {
+      res.send('Deletion was successful');
+    }
+  });
+});
