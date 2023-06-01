@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" />
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+  
+    #map {
+      height: 100vh;
+      max-width: 100%;
+    }
+  </style>
+  <title>Map</title>
+</head>
+<body>
+  <div id="map"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
+  <script>
+    Promise.all([
+      new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js';
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      }),
+      new Promise((resolve, reject) => {
+        const image = new Image();
+        image.src = 'images/marker.png';
+        image.onload = resolve;
+        image.onerror = reject;
+      })
+    ])
+      .then(() => {
+        const map = L.map('map').setView([50.4501, 30.5234], 7);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        const customIcon = L.icon({
+          iconUrl: 'images/marker.png',
+          iconSize: [32, 32],
+          iconAnchor: [16, 32],
+        });
+
+        fetch('http://localhost:3000/places')
+          .then(response => response.json())
+          .then(places => {
+            places.forEach(place => {
+              const marker = L.marker([place.latitude, place.longitude], { icon: customIcon }).addTo(map);
+              marker.bindPopup(place.name);
+            });
+          })
+          .catch(error => console.error(error));
+      })
+      .catch(error => console.error('Failed to load Leaflet or custom marker image:', error));
+  </script>
+</body>
+</html>
