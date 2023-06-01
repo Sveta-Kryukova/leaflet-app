@@ -1,4 +1,3 @@
-//api.js
 const client = require('./placesdb.js');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -43,20 +42,33 @@ app.get('/places/:id', (req, res) => {
 })
 
 app.post('/places', (req, res) => {
-  const place = req.body
-  const insertQuery = `INSERT INTO places (id, name, description, latitude, longitude)
-  VALUES ($1, $2, $3, $4, $5)`
-  const values = [place.id, place.name, place.description, place.latitude, place.longitude]
+  const place = req.body;
 
-  client.query(insertQuery, values, (err, result) => {
+  client.query('SELECT MAX(id) FROM places', (err, result) => {
     if (err) {
-      console.log(err)
-      res.status(500).send('Internal Server Error')
-    } else {
-      res.send('Place added successfully')
+      console.log(err);
+      res.status(500).send('Internal Server Error');
+      return;
     }
-  })
-})
+
+    const maxId = result.rows[0].max;
+    const newId = maxId ? maxId + 1 : 1;
+
+    const insertQuery = `INSERT INTO places (id, name, description, latitude, longitude)
+  VALUES ($1, $2, $3, $4, $5) RETURNING *`;
+    const values = [newId, place.name, place.description, place.latitude, place.longitude];
+
+    client.query(insertQuery, values, (err, result) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send('Internal Server Error');
+      } else {
+        const addedPlace = result.rows[0];
+        res.send(addedPlace);
+      }
+    });
+  });
+});
 
 app.put('/places/:id', (req, res)=> {
   let place = req.body;

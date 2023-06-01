@@ -1,0 +1,102 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+#map {
+  height: 100vh;
+  max-width: 100%;
+}
+
+.hidden {
+  display: none;
+}
+
+#newPlaceForm {
+  display: hidden;
+  flex-direction: column;
+  justify-content: center;
+  position: absolute;
+  width: 200px;
+  top: 13px;
+  left: 45px;
+  padding: 10px;
+  background-color: white;
+  z-index: 999;
+  border-radius: 10px;
+}
+
+#newPlaceForm label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+#newPlaceForm input[type="text"],
+#newPlaceForm textarea {
+  width: 92%;
+  padding: 5px;
+  margin-bottom: 10px;
+}
+
+#newPlaceForm button[type="submit"] {
+  background-color: #4CAF50;
+  width: 60%;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+#newPlaceForm button[type="submit"]:hover {
+  background-color: #45a049;
+}
+
+.leaflet-popup-content button {
+  background-color: #008CBA;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  margin-top: 5px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.leaflet-popup-content button:hover {
+  background-color: #0072A9;
+}
+#editPlaceForm {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#editPlaceForm label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+#editPlaceForm input[type="text"],
+#editPlaceForm textarea {
+  width: 92%;
+  padding: 5px;
+  margin-bottom: 10px;
+}
+
+#editPlaceForm button[type="submit"],
+#editPlaceForm button {
+  background-color: #4CAF50;
+  width: 90%;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+#editPlaceForm button[type="submit"]:hover,
+#editPlaceForm button:hover {
+  background-color: #45a049;
+}
