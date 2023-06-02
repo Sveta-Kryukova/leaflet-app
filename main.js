@@ -49,20 +49,23 @@ function editPlace(id) {
   const editDescriptionInput = document.getElementById(`editDescription${id}`);
   const descriptionCounter = document.getElementById(`descriptionCounter${id}`);
 
-  editDescriptionInput.addEventListener('input', () => {
+  const updateDescriptionCounter = () => {
     const descriptionLength = editDescriptionInput.value.length;
     const remainingCharacters = MAX_DESCRIPTION_LENGTH - descriptionLength;
     descriptionCounter.textContent = `${remainingCharacters} characters left`;
 
     if (descriptionLength > MAX_DESCRIPTION_LENGTH) {
       descriptionCounter.style.color = 'red';
-      editDescriptionInput.classList.add('error');
       descriptionCounter.textContent = `Text is more than 200 characters`;
+      editDescriptionInput.value = editDescriptionInput.value.slice(0, MAX_DESCRIPTION_LENGTH);
     } else {
       descriptionCounter.style.color = '';
       editDescriptionInput.classList.remove('error');
     }
-  });
+  };
+
+  editDescriptionInput.addEventListener('input', updateDescriptionCounter);
+  updateDescriptionCounter();
 
   editPlaceForm.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -193,14 +196,16 @@ function initializeNewPlaceForm() {
   });
 
   descriptionInput.addEventListener('input', () => {
-    const descriptionLength = descriptionInput.value.length;
+    let descriptionValue = descriptionInput.value;
+    const descriptionLength = descriptionValue.length;
     const remainingCharacters = MAX_DESCRIPTION_LENGTH - descriptionLength;
     descriptionCounter.textContent = `${remainingCharacters} characters left`;
 
     if (descriptionLength > MAX_DESCRIPTION_LENGTH) {
       descriptionCounter.style.color = 'red';
-      descriptionInput.classList.add('error');
       descriptionCounter.textContent = `Text is more than 200 characters`;
+      descriptionValue = descriptionValue.slice(0, MAX_DESCRIPTION_LENGTH);
+      descriptionInput.value = descriptionValue;
     } else {
       descriptionCounter.style.color = '';
       descriptionInput.classList.remove('error');
@@ -320,11 +325,34 @@ function initializeValidationErrorModal() {
     modal.style.display = 'none';
   });
 }
+const instructionsModal = document.getElementById('instructionsModal');
+      const closeModalButton = document.getElementById('closeModal');
+      const modalShownKey = 'mapInstructionsShown';
+
+      closeModalButton.addEventListener('click', () => {
+        instructionsModal.style.display = 'none';
+        localStorage.setItem(modalShownKey, 'true');
+      });
+      window.addEventListener('load', () => {
+        const modalShown = localStorage.getItem(modalShownKey);
+
+        if (!modalShown) {
+          instructionsModal.style.display = 'block';
+        }
+      });
 
 function initializeApp() {
   initializeMap();
   initializeNewPlaceForm();
   initializeValidationErrorModal();
 }
+
+function showInstructionsModal() {
+  const instructionsModal = document.getElementById('instructionsModal');
+  instructionsModal.style.display = 'block';
+}
+
+const showInstructionsBtn = document.getElementById('showInstructionsBtn');
+showInstructionsBtn.addEventListener('click', showInstructionsModal);
 
 initializeApp();
