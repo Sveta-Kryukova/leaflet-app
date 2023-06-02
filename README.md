@@ -92,7 +92,5 @@ Happy coding!
 <h3>Contact</h3>
 If you have any questions or feedback, feel free to contact the developer:
 
-Email: email@example.com
-LinkedIn: Developer's LinkedIn Profile
-Telegram: Developer's Telegram
-GitHub: Developer's GitHub Profile
+Email: [Developer's mail](svetlana.kryukova.job@gmail.com)
+LinkedIn: [Developer's LinkedIn Profile](https://www.linkedin.com/in/svetlana-kryukova-a06219265/?locale=en_US)
