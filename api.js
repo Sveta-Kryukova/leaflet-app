@@ -5,19 +5,15 @@ const client = require('./placesdb.js');
 
 const app = express();
 const PORT = 3000;
-
 app.use(bodyParser.json());
 app.use(cors());
-
 app.listen(PORT, () => {
   const serverUrl = `http://localhost:${PORT}/places`;
   console.log('\x1b[36m%s\x1b[0m', 'Server running on port 3000 ✨✨✨');
   console.log(`To access the application, open your browser and navigate to:`);
   console.log(`\x1b[4m\x1b[32m%s\x1b[0m`, serverUrl);
 });
-
 client.connect();
-
 app.get('/places', (req, res) => {
   client.query('SELECT * FROM places', (err, result) => {
     if (err) {
@@ -43,14 +39,12 @@ app.get('/places/:id', (req, res) => {
 
 app.post('/places', (req, res) => {
   const place = req.body;
-
   client.query('SELECT MAX(id) FROM places', (err, result) => {
     if (err) {
       console.log(err);
       res.status(500).send('Internal Server Error');
       return;
     }
-
     const maxId = result.rows[0].max;
     const newId = maxId ? maxId + 1 : 1;
 

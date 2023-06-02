@@ -7,79 +7,90 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;600&family=Roboto:wght@100;300&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" />
+    <link rel="stylesheet" href="reset.css" /> <!-- Link to the reset CSS file -->
     <link rel="stylesheet" href="styles.css" />
     <title>Map</title>
   </head>
-  <body>
-    <header>
-      <h1>My Map</h1>
-    </header>
-  
-    <div id="instructionsModal" class="modal">
-      <div class="modal-content">
-        <h2>Welcome to the Map!</h2>
-        <p>
-          <strong>the following controls to interact with the map:</strong> 
-        </p>
-        <ul>
-          <li><b>Zoom in/out:</b> Scroll with the mouse/touchpad or use the "+" and "-" buttons on the top-left corner of the map.</li>
-          <li><b>Pan the map:</b> Double click and drag the map to move around.</li>
-          <li><b>Keyboard controls:</b> Use the arrow keys to pan the map, "Shift +" and "Shift -" keys to zoom in/out.</li>
-        </ul>
-        <p>
-          <strong>To add a new place:</strong> 
-        </p>
-        <ul>
-          <li>Click on the desired location on the map.</li>
-          <li>Fill out the name, description in the form that appears.</li>
-          <li>Click the "Add Place" button.</li>
-        </ul>
-        <p>
-          <strong>To edit or delete a place:</strong>
-        </p>
-        <ul>
-          <li>Click on the place marker on the map.</li>
-          <li>Click the "Edit" button to modify the place's details.</li>
-          <li>Click the "Delete" button to remove the place from the map.</li>
-        </ul>
-        <button id="closeModal" class="btn">Got it!</button>
-      </div>
-    </div>
-    
-    <div id="map-container">
-      <div id="map"></div>
-    </div>
-  
-    <form id="newPlaceForm" class="hidden">
-      <label for="name">Name:</label>
-      <input type="text" id="name" name="name" required><br>
-    
-      <label for="description">Description:</label>
-      <textarea id="description" name="description"></textarea><br>
-    
-      <label for="latitude">Latitude:</label>
-      <input type="text" id="latitude" name="latitude" required><br>
-    
-      <label for="longitude">Longitude:</label>
-      <input type="text" id="longitude" name="longitude" required><br>
-    
-      <div class="form-actions">
-        <button type="submit" class="btn">Add Place</button>
-        <button id="closeForm" type="button" class="btn">Close</button>
-      </div>
-    </form>
+<body>
+  <header>
+    <h1>My Map</h1>
+  </header>
 
-    <footer>
-      <div class="footer-content">
-        <p>Created by Svetlana Kryukova</p>
-        <a href="https://t.me/Kriukova_Lana" target="_blank"><img src="images/telegram.png" alt="Telegram"></a>
-        <a href="" target="_blank"><img src="images/linkedin.png" alt="LinkedIn"></a>
-        <a href="mailto:svetlana.kryukova.job@gmail.com"><img src="images/gmail.png" alt="Email"></a>
-        <a href="https://github.com/Sveta-Kryukova" target="_blank"><img src="images/github.png" alt="GitHub"></a>
-      </div>
-    </footer>
+  <div id="instructionsModal" class="modal">
+    <div class="modalContent">
+      <h2>Welcome to the Map!</h2>
+      <p>
+        <strong>Use the following controls to interact with the map:</strong> 
+      </p>
+      <ul>
+        <li><b>Zoom in/out:</b> Scroll with the mouse/touchpad or use the "+" and "-" buttons on the top-left corner of the map.</li>
+        <li><b>Pan the map:</b> Double click and drag the map to move around.</li>
+        <li><b>Keyboard controls:</b> Use the arrow keys to pan the map, "Shift +" and "Shift -" keys to zoom in/out.</li>
+      </ul>
+      <p>
+        <strong>To add a new place:</strong> 
+      </p>
+      <ul>
+        <li>Click on the desired location on the map.</li>
+        <li>Fill out the name and description in the form that appears.</li>
+        <li>Click the "Add Place" button.</li>
+      </ul>
+      <p>
+        <strong>To edit or delete a place:</strong>
+      </p>
+      <ul>
+        <li>Click on the place marker on the map.</li>
+        <li>Click the "Edit" button to modify the place's details.</li>
+        <li>Click the "Delete" button to remove the place from the map.</li>
+      </ul>
+      <button id="closeModal" class="btn">Got it!</button>
+    </div>
+  </div>
+
+  <div id="mapContainer">
+    <div id="map"></div>
+  </div>
+
+  <form id="newPlaceForm" class="hidden">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required><br>
+
+    <div>
+      <label for="description">Description:</label>
+      <textarea id="description" name="description"></textarea>
+      <div id="descriptionCounter">200 characters remaining</div>
+    </div>
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
-    <script src="main.js"></script>
-  </body>
+    <label for="latitude">Latitude:</label>
+    <input type="text" id="latitude" name="latitude" required><br>
+
+    <label for="longitude">Longitude:</label>
+    <input type="text" id="longitude" name="longitude" required><br>
+
+    <div class="formActions">
+      <button type="submit" class="btn">Add Place</button>
+      <button id="closeForm" type="button" class="btn">Close</button>
+    </div>
+  </form>
+
+  <div id="validationErrorModal" class="modal">
+    <div class="modalContent">
+      <span class="close">&times;</span>
+      <p id="validationErrorMessage"></p>
+    </div>
+  </div>
+  
+  <footer>
+    <div class="footerContent">
+      <p>Created by Svetlana Kryukova</p>
+      <a href="https://t.me/Kryukova_Sv" target="_blank"><img src="images/telegram.png" alt="Telegram"></a>
+      <a href="" target="_blank"><img src="images/linkedin.png" alt="LinkedIn"></a>
+      <a href="mailto:svetlana.kryukova.job@gmail.com"><img src="images/gmail.png" alt="Email"></a>
+      <a href="https://github.com/Sveta-Kryukova" target="_blank"><img src="images/github.png" alt="GitHub"></a>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
+  <script src="main.js"></script>
+</body>
 </html>

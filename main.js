@@ -1,6 +1,13 @@
 let map;
 let markers = {};
 
+const MAX_DESCRIPTION_LENGTH = 200;
+const customIcon = L.icon({
+  iconUrl: 'images/marker.png',
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+});
+
 function deletePlace(id) {
   fetch(`http://localhost:3000/places/${id}`, {
     method: 'DELETE',
@@ -23,18 +30,44 @@ function deletePlace(id) {
 function editPlace(id) {
   const marker = markers[id];
   const popupContent = `
-    <form id="editPlaceForm-${id}" class="edit-place-form">
-      <label for="editName-${id}">Name:</label>
-      <input type="text" id="editName-${id}" name="editName" value="${marker.name}" required><br>
+    <form id="editPlaceForm${id}" class="editPlaceForm">
+      <label for="editName${id}">Name:</label>
+      <input type="text" id="editName${id}" name="editName" value="${marker.name}" required><br>
 
-      <label for="editDescription-${id}">Description:</label>
-      <textarea id="editDescription-${id}" name="editDescription" required>${marker.description}</textarea><br>
+      <label for="editDescription${id}">Description:</label>
+      <textarea id="editDescription${id}" name="editDescription">${marker.description}</textarea>
+      <div id="descriptionCounter${id}"></div><br>
 
       <button type="submit">Save</button>
-      <button class="cancel-edit" data-id="${id}">Cancel</button>
+      <button class="cancelEdit" data-id="${id}">Cancel</button>
     </form>
   `;
   marker.setPopupContent(popupContent);
+
+  const editPlaceForm = document.getElementById(`editPlaceForm${id}`);
+  const editNameInput = document.getElementById(`editName${id}`);
+  const editDescriptionInput = document.getElementById(`editDescription${id}`);
+  const descriptionCounter = document.getElementById(`descriptionCounter${id}`);
+
+  editDescriptionInput.addEventListener('input', () => {
+    const descriptionLength = editDescriptionInput.value.length;
+    const remainingCharacters = MAX_DESCRIPTION_LENGTH - descriptionLength;
+    descriptionCounter.textContent = `${remainingCharacters} characters left`;
+
+    if (descriptionLength > MAX_DESCRIPTION_LENGTH) {
+      descriptionCounter.style.color = 'red';
+      editDescriptionInput.classList.add('error');
+      descriptionCounter.textContent = `Text is more than 200 characters`;
+    } else {
+      descriptionCounter.style.color = '';
+      editDescriptionInput.classList.remove('error');
+    }
+  });
+
+  editPlaceForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    savePlace(id, editNameInput, editDescriptionInput);
+  });
 }
 
 function cancelEditPlace(id) {
@@ -48,10 +81,26 @@ function cancelEditPlace(id) {
   marker.setPopupContent(popupContent);
 }
 
-function savePlace(id) {
+function savePlace(id, editNameInput, editDescriptionInput) {
   const marker = markers[id];
-  const newName = document.getElementById(`editName-${id}`).value;
-  const newDescription = document.getElementById(`editDescription-${id}`).value;
+  const newName = editNameInput.value.trim();
+  const newDescription = editDescriptionInput.value.trim();
+
+  if (newName === '') {
+    editNameInput.style.borderColor = 'red';
+    showValidationErrorModal('Please enter a name for the place.');
+    editNameInput.focus();
+    return;
+  }
+
+  if (/^[0-9\W]+$/.test(newName)) {
+    editNameInput.style.borderColor = 'red';
+    showValidationErrorModal('Name should not consist of numbers or symbols.');
+    editNameInput.focus();
+    return;
+  }
+
+  editNameInput.style.borderColor = '';
 
   marker.name = newName;
   marker.description = newDescription;
@@ -71,23 +120,29 @@ function handleEditDeleteClick(event) {
     editPlace(id);
   } else if (event.target.classList.contains('delete')) {
     deletePlace(id);
-  } else if (event.target.classList.contains('cancel-edit')) {
+  } else if (event.target.classList.contains('cancelEdit')) {
     cancelEditPlace(id);
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+function showValidationErrorModal(message) {
+  const modal = document.getElementById('validationErrorModal');
+  const errorMessage = document.getElementById('validationErrorMessage');
+  errorMessage.textContent = message;
+  modal.style.display = 'block';
+}
+
+function hideValidationErrorModal() {
+  const modal = document.getElementById('validationErrorModal');
+  modal.style.display = 'none';
+}
+
+function initializeMap() {
   map = L.map('map').setView([50.4501, 30.5234], 7);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors',
   }).addTo(map);
-
-  const customIcon = L.icon({
-    iconUrl: 'images/marker.png',
-    iconSize: [32, 32],
-    iconAnchor: [16, 32],
-  });
 
   map.on('click', (event) => {
     const { lat, lng } = event.latlng;
@@ -96,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('latitude').value = latitude;
     document.getElementById('longitude').value = longitude;
-    document.getElementById('newPlaceForm').classList.remove('hidden');
+    document.getElementById('newPlaceForm').style.display = 'flex';
   });
 
   fetch('http://localhost:3000/places')
@@ -124,24 +179,88 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     })
     .catch((error) => console.error(error));
+}
 
+function initializeNewPlaceForm() {
   const form = document.getElementById('newPlaceForm');
-  map.on('click', () => {
-    form.classList.remove('hidden');
+  const closeFormBtn = document.getElementById('closeForm');
+  const descriptionInput = document.getElementById('description');
+  const descriptionCounter = document.getElementById('descriptionCounter');
+
+  closeFormBtn.addEventListener('click', () => {
+    form.style.display = 'none';
+    form.reset();
   });
 
-  const closeFormBtn = document.getElementById('closeForm');
-  closeFormBtn.addEventListener('click', () => {
-    form.classList.add('hidden');
+  descriptionInput.addEventListener('input', () => {
+    const descriptionLength = descriptionInput.value.length;
+    const remainingCharacters = MAX_DESCRIPTION_LENGTH - descriptionLength;
+    descriptionCounter.textContent = `${remainingCharacters} characters left`;
+
+    if (descriptionLength > MAX_DESCRIPTION_LENGTH) {
+      descriptionCounter.style.color = 'red';
+      descriptionInput.classList.add('error');
+      descriptionCounter.textContent = `Text is more than 200 characters`;
+    } else {
+      descriptionCounter.style.color = '';
+      descriptionInput.classList.remove('error');
+    }
   });
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
 
-    const name = document.getElementById('name').value;
-    const description = document.getElementById('description').value;
-    const latitude = parseFloat(document.getElementById('latitude').value);
-    const longitude = parseFloat(document.getElementById('longitude').value);
+    const nameInput = document.getElementById('name');
+    const descriptionInput = document.getElementById('description');
+    const latitudeInput = document.getElementById('latitude');
+    const longitudeInput = document.getElementById('longitude');
+
+    const name = nameInput.value.trim();
+    const description = descriptionInput.value.trim();
+    const latitude = parseFloat(latitudeInput.value);
+    const longitude = parseFloat(longitudeInput.value);
+
+    if (name === '') {
+      nameInput.style.borderColor = 'red';
+      showValidationErrorModal('Please enter a name for the place.');
+      nameInput.focus();
+      return;
+    }
+
+    if (/^[0-9\W]+$/.test(name)) {
+      nameInput.style.borderColor = 'red';
+      showValidationErrorModal('Name should not consist of numbers or symbols.');
+      nameInput.focus();
+      return;
+    }
+    nameInput.style.borderColor = '';
+
+    if (description.length > MAX_DESCRIPTION_LENGTH) {
+      descriptionInput.style.borderColor = 'red';
+      showValidationErrorModal('Description length should not exceed 200 characters.');
+      descriptionInput.focus();
+      return;
+    }
+
+    descriptionInput.style.borderColor = '';
+
+    if (isNaN(latitude) || !isFinite(latitude)) {
+      latitudeInput.style.borderColor = 'red';
+      showValidationErrorModal('Please enter a valid latitude.');
+      latitudeInput.focus();
+      return;
+    }
+
+    latitudeInput.style.borderColor = '';
+
+    if (isNaN(longitude) || !isFinite(longitude)) {
+      longitudeInput.style.borderColor = 'red';
+      showValidationErrorModal('Please enter a valid longitude.');
+      longitudeInput.focus();
+      return;
+    }
+
+    longitudeInput.style.borderColor = '';
 
     const newPlace = {
       name: name,
@@ -185,27 +304,27 @@ document.addEventListener('DOMContentLoaded', () => {
         markers[result.id] = marker;
 
         form.reset();
-        form.classList.add('hidden');
+        form.style.display = 'none';
       })
       .catch((error) => {
         console.error(error);
       });
   });
-});
+}
 
-const instructionsModal = document.getElementById('instructionsModal');
-      const closeModalButton = document.getElementById('closeModal');
-      const modalShownKey = 'mapInstructionsShown';
+function initializeValidationErrorModal() {
+  const modal = document.getElementById('validationErrorModal');
+  const closeModalButton = document.querySelector('#validationErrorModal .close')
 
-      closeModalButton.addEventListener('click', () => {
-        instructionsModal.style.display = 'none';
-        localStorage.setItem(modalShownKey, 'true');
-      });
+  closeModalButton.addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
+}
 
-      window.addEventListener('load', () => {
-        const modalShown = localStorage.getItem(modalShownKey);
+function initializeApp() {
+  initializeMap();
+  initializeNewPlaceForm();
+  initializeValidationErrorModal();
+}
 
-        if (!modalShown) {
-          instructionsModal.style.display = 'block';
-        }
-      });
+initializeApp();

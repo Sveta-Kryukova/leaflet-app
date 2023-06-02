@@ -6,31 +6,33 @@ body {
 header {
   background-color: #4CAF50;
   color: #fff;
-  padding: 10px;
+  padding: 5px;
   text-align: center;
-  height: 20px;
+  height: 40px;
 }
 
 h1 {
   font-family: "Roboto", sans-serif;
+  font-weight: bold;
   font-size: 20px;
   margin: 0;
 }
 
 p {
   font-family: "Roboto", sans-serif;
-  font-size: 8px;
+  font-size: 15px;
   margin: 0;
+  padding: 5px;
 }
 
-#map-container {
+#mapContainer {
   width: 80%;
   margin: 0 auto;
   padding-top: 10px;
 }
 
 #map {
-  height: 300px;
+  height: 600px;
 }
 
 .hidden {
@@ -44,9 +46,9 @@ p {
   flex-direction: column;
   justify-content: center;
   position: absolute;
-  width: 200px;
-  top: 80px;
-  left: 140px;
+  width: 180px;
+  top: 45px;
+  left: 150px;
   padding: 5px;
   background-color: white;
   z-index: 999;
@@ -60,12 +62,14 @@ p {
 
 #newPlaceForm input[type="text"],
 #newPlaceForm textarea {
-  width: 92%;
+  width: 100%;
   padding: 3px;
   margin-bottom: 5px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
 }
 
-.form-actions {
+.formActions {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -88,53 +92,83 @@ p {
   background-color: #45a049;
 }
 
-.leaflet-popup-content button {
+.leafletPopupContent button {
   font-size: 10px;
-  background-color: #008CBA;
+  background-color: #45a049;
   color: white;
   border: none;
   padding: 5px;
-  margin-top: 5px;
+  margin-top: 3px;
   cursor: pointer;
   border-radius: 5px;
 }
 
 .leaflet-popup-content button:hover {
-  background-color: #0072A9;
+  background-color: #4CAF50;
 }
 
-#editPlaceForm {
+.leaflet-popup-content,
+.leaflet-popup-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+  padding: 10px;
+  width: 220px;
+}
+.leaflet-popup-content {
+  margin-top: 10px;
+  padding: 2px;
+  max-height: 200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+
+.editPlaceForm {
+  font-family: "Roboto", sans-serif;
   font-size: 10px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  width: 210px;
+  padding: 5px;
+  margin: 0;
 }
 
-#editPlaceForm label {
+.editPlaceForm label {
   display: block;
   margin-bottom: 3px;
 }
 
-#editPlaceForm input[type="text"],
-#editPlaceForm textarea {
-  width: 92%;
-  padding: 2px;
-  margin-bottom: 3px;
+.editPlaceForm input[type="text"],
+.editPlaceForm textarea {
+  width: 80%;
+  padding: 3px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
 }
 
-#editPlaceForm button[type="submit"],
-#editPlaceForm button {
+.editPlaceForm button[type="submit"],
+.editPlaceForm button.cancelEdit,
+.edit,
+.delete {
+  font-family: "Roboto", sans-serif;
+  font-size: 10px;
   background-color: #4CAF50;
-  width: 90%;
+  width: 80%;
   color: white;
   border: none;
-  padding: 5px 10px;
+  padding: 5px;
   cursor: pointer;
   border-radius: 10px;
+  width: 70%;
+  margin: 2px auto;
+  background-color: #45a049;
 }
 
-#editPlaceForm button[type="submit"]:hover,
-#editPlaceForm button:hover {
+.editPlaceForm button[type="submit"]:hover,
+.editPlaceForm button.cancelEdit:hover {
   background-color: #45a049;
 }
 
@@ -150,7 +184,7 @@ p {
   opacity: 90%;
 }
 
-.modal-content {
+.modalContent {
   font-family: "Roboto", sans-serif;
   font-size: 13px;
   display: flex;
@@ -168,7 +202,7 @@ p {
 .modal h2 {
   font-size: 20px;
   margin-top: 0;
-  color: #45a049
+  color: #45a049;
 }
 
 .modal ul {
@@ -190,9 +224,10 @@ p {
 }
 
 footer {
+  display: flex;
   position: fixed;
   bottom: 0;
-  height: 10px;
+  height: 40px;
   width: 100%;
   background-color: #4CAF50;
   color: #fff;
@@ -203,26 +238,40 @@ footer {
   justify-content: center;
 }
 
-.footer-content {
-  height: 10px;
+.footerContent {
+  height: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 10px;
 }
 
-.footer-content a {
+.footerContent a {
   transition: all 0.3s;
+  height: 20px;
 }
 
-.footer-content a:hover {
+.footerContent a:hover {
   transform: scale(1.3);
 }
 
 img {
-  width: 12px;
-  height: 12px;
+  width: 20px;
+  height: 20px;
+}
+textarea {
+  overflow: auto;
+  resize: vertical;
 }
 
-
+#descriptionCounter {
+  font-family: 'Roboto', sans-serif;
+  font-size: 10px;
+  color: #45a049;
+  margin: 0 10px;
+  text-align: right;
+}
+#validationErrorModal .close {
+  cursor: pointer;
+}
 
