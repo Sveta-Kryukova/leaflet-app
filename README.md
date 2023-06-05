@@ -77,10 +77,14 @@ If Node.js is not installed, you can download and install it from the official N
 Open the cloned repository in your preferred code editor.
 
 In the terminal, navigate to the project directory.
+Install modules:
+  ```
+  npm install
+  ```
 
 Run the following command:
 ```
-node api.js
+npm run dev
   ```
 This command will start the server and make the application accessible locally.
 
