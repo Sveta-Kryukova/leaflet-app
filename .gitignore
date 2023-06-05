@@ -6,5 +6,12 @@ filename.txt
 
 # Ignore a directory and all its contents
 node_modules/
-# Ignore all files and directories inside a directory
-directory/*
+.npm/
+.idea/
+.vscode/
+dist/
+build/
+.env
+config.js
+
+
